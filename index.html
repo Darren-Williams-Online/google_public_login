@@ -1,0 +1,75 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Google Public Login</title>
+    <link rel="icon" type="image/x-icon" href="static/favicon.ico">
+    <link rel="stylesheet" href="static/styles.css">
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+</head>
+<body>
+    <header>
+        <h1>Google Public Login</h1>
+    </header>
+    <main>
+        <section id="login-section">
+            <h2>Welcome to Google Public Login</h2>
+            <p>Please sign in with your Google account to continue.</p>
+            
+            <!-- Google Sign-In Button (auto-prompt disabled) -->
+            <div id="g_id_onload"
+                 data-client_id="590236211605-r4e76i4iru11usaka1b4ng3rfu213tr8.apps.googleusercontent.com"
+                 data-context="signin"
+                 data-ux_mode="popup"
+                 data-callback="handleCredentialResponse"
+                 data-auto_prompt="false">
+            </div>
+            <div class="g_id_signin"
+                 data-type="standard"
+                 data-size="large"
+                 data-theme="outline"
+                 data-text="sign_in_with"
+                 data-shape="rectangular"
+                 data-logo_alignment="left">
+            </div>
+            
+            <!-- Manual Sign-In Button (fallback) -->
+            <button id="manual-signin" style="margin-top: 20px; display: none;">
+                Sign in with Google
+            </button>
+            
+            <!-- Test Popup Button for debugging -->
+            <button id="test-popup" style="margin-top: 10px; background: #ff9800; color: white; border: none; padding: 8px 16px; border-radius: 4px;">
+                Test Popup Login
+            </button>
+            
+            <!-- Reset Google State Button -->
+            <button onclick="window.googleLoginDebug.resetGoogleState()" style="margin-top: 5px; background: #9c27b0; color: white; border: none; padding: 8px 16px; border-radius: 4px;">
+                Reset Google State
+            </button>
+            
+            <!-- Force Popup Button -->
+            <button onclick="window.googleLoginDebug.forcePopup()" style="margin-top: 5px; background: #f44336; color: white; border: none; padding: 8px 16px; border-radius: 4px;">
+                Force Popup
+            </button>
+            
+            <!-- Check State Button -->
+            <button onclick="window.googleLoginDebug.checkState()" style="margin-top: 5px; background: #607d8b; color: white; border: none; padding: 8px 16px; border-radius: 4px;">
+                Check State
+            </button>
+        </section>
+        
+        <section id="profile-section" style="display: none; max-width: 800px;">
+            <h2>Welcome!</h2>
+            <div id="user-info"></div>
+            <button id="signout-btn">Sign Out</button>
+        </section>
+    </main>
+    <footer>
+       footer
+    </footer>
+    <script src="google_login.js"></script>
+</body>
+</html>

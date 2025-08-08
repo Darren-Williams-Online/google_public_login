@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Google One Tap - Final</title>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+</head>
+<body>
+    <h1>Google One Tap Login</h1>
+    <p>The sign-in prompt should appear automatically in the top-right corner.</p>
+    
+    <div id="user-info" style="margin-top: 20px; padding: 20px; background: #e8f5e9; display: none; text-align: center; border: 1px solid #4caf50;">
+        <h3>Signed in successfully!</h3>
+        <div id="user-details"></div>
+        <button onclick="signOut()">Sign Out</button>
+    </div>
+
+    <script>
+        // This function runs when the page has loaded
+        window.onload = function () {
+            console.log('🔧 Page loaded. Waiting for Google API...');
+
+            // A simple interval to check when the Google API is ready
+            const checkGoogleAPI = setInterval(() => {
+                if (typeof google !== 'undefined' && google.accounts && google.accounts.id) {
+                    clearInterval(checkGoogleAPI);
+                    console.log('✅ Google API is ready. Initializing...');
+
+                    // 1. Initialize the client
+                    google.accounts.id.initialize({
+                        client_id: '590236211605-r4e76i4iru11usaka1b4ng3rfu213tr8.apps.googleusercontent.com',
+                        callback: handleCredentialResponse,
+                        use_fedcm_for_prompt: true
+                    });
+
+                    // 2. Display the One Tap prompt using the FedCM-compliant method
+                    google.accounts.id.prompt((notification) => {
+                        const moment = notification.getMomentType();
+                        console.log('🔔 FedCM Notification Moment:', moment);
+
+                        switch (moment) {
+                            case 'display':
+                                console.log('✅ Prompt UI was displayed to the user.');
+                                break;
+                            case 'skipped':
+                                console.warn('❌ Prompt was skipped. Reason:', notification.getSkippedReason());
+                                break;
+                            case 'dismissed':
+                                console.warn('❌ Prompt was dismissed by the user. Reason:', notification.getDismissedReason());
+                                break;
+                            case 'credential_returned':
+                                console.log('🔐 A credential was returned and is being handled by the callback.');
+                                break;
+                            default:
+                                console.error('Unknown moment type:', moment);
+                                break;
+                        }
+                    });
+
+                    console.log('🎯 One Tap prompt requested.');
+                }
+            }, 100);
+        };
+
+        // Callback function to handle the credential response
+        function handleCredentialResponse(response) {
+            console.log("✅ Login successful!");
+            const responsePayload = decodeJwtResponse(response.credential);
+            
+            document.getElementById('user-info').style.display = 'block';
+            document.getElementById('user-details').innerHTML = `
+                <img src="${responsePayload.picture}" style="border-radius: 50%; width: 80px;">
+                <p><strong>Name:</strong> ${responsePayload.name}</p>
+                <p><strong>Email:</strong> ${responsePayload.email}</p>
+            `;
+        }
+
+        // Helper function to decode the JWT token from the credential
+        function decodeJwtResponse(token) {
+            try {
+                const base64Url = token.split('.')[1];
+                const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+                const jsonPayload = decodeURIComponent(atob(base64).split('').map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join(''));
+                return JSON.parse(jsonPayload);
+            } catch (e) {
+                console.error("Error decoding JWT:", e);
+                return null;
+            }
+        }
+        
+        // Function to sign out the user
+        function signOut() {
+            if (google && google.accounts && google.accounts.id) {
+                google.accounts.id.disableAutoSelect();
+            }
+            window.location.reload();
+        }
+    </script>
+</body>
+</html>
