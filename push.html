@@ -8,10 +8,13 @@
 </head>
 <body>
     <h1>Web Push Notification Setup</h1>
-    <p>Click the button below to request permission to send push notifications.</p>
-    <button id="enable-push-button">Enable Push Notifications</button>
+    <p>You will be prompted to allow push notifications when this page loads.</p>
+    <button id="unsubscribe-push-button">Unsubscribe from Notifications</button>
+    <button id="clear-status-button" style="margin-left: 10px;">Clear</button>
+    <button id="follow-me-button" style="margin-left: 10px; background: #28a745; color: white;">Follow Me</button>
     <p id="status-message" style="font-family: monospace;"></p>
 
-    <script src="client.js"></script>
+  <script src="notification/client.js"></script>
+  <script src="notification/push.js"></script>
 </body>
 </html>

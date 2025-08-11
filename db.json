@@ -1,1 +1,18 @@
-{}
+{
+  "subscriptions": [
+    {
+      "user": {
+        "name": "Michael Inkman",
+        "group": "lo_subscribed"
+      },
+      "subscription": {
+        "endpoint": "https://fcm.googleapis.com/fcm/send/ekMrAYh7P1g:APA91bGvk2ibnNocxdI0N80C4vdmZPT3wBpEEDMPPhup50ZycWJ91pU_Pd53Dy7v1zgik_dQhTkup9125S0-rad3HMOmFFoQgWO8yiuvDbyJ6nfo3cX9l06KBnsx3DBwB6-A7UZcqE1V",
+        "expirationTime": null,
+        "keys": {
+          "p256dh": "BKXGwy5BoF1ga_5Zowl5xS5K26uNuEbCOhaztiOiz4aynMuX2sU7RJMet55V3XLD2QnEu7jD5_8HfiIxOWjMsP4",
+          "auth": "HyTwnoQMD3qi3wd7rdZugQ"
+        }
+      }
+    }
+  ]
+}

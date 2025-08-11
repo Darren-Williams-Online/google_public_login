@@ -1,0 +1,25 @@
+# Node modules
+node_modules/
+
+# Environment variables and secrets
+.env
+
+# Local database and sensitive data
+db.json
+
+# OS/Editor files
+.DS_Store
+Thumbs.db
+*.log
+
+# Build output (if any)
+dist/
+build/
+
+# VSCode settings
+.vscode/
+
+# Misc
+*.local
+*.swp
+*.txt

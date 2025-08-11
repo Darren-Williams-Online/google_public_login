@@ -3,109 +3,112 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/post_css.css">
     <title>Send Push Notification</title>
     <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            background-color: #f0f2f5;
+        .toggle-row {
+            text-align: center;
+            margin-bottom: 1.2rem;
         }
         .container {
+            transition: max-width 0.6s cubic-bezier(0.4,0,0.2,1), width 0.6s cubic-bezier(0.4,0,0.2,1);
+        }
+        .container.slim {
+            max-width: 420px;
+        }
+        .container.wide {
+            max-width: 900px;
+            font-weight: 500;
             text-align: center;
-            background: white;
-            padding: 40px;
-            border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-        }
-        h1 {
-            margin-bottom: 20px;
-            color: #333;
-        }
-        textarea {
-            width: 100%;
-            padding: 10px;
-            border-radius: 8px;
-            border: 1px solid #ccc;
-            margin-bottom: 20px;
-            font-size: 16px;
-            min-height: 80px;
-            box-sizing: border-box;
-        }
-        button {
-            padding: 12px 24px;
-            border: none;
-            background-color: #007bff;
-            color: white;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 16px;
-            transition: background-color 0.3s;
-        }
-        button:hover {
-            background-color: #0056b3;
-        }
-        #response-message {
-            margin-top: 20px;
-            font-size: 14px;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Send a Push Notification</h1>
+        <div class="toggle-row">
+            <label class="toggle-switch">
+                <input type="checkbox" id="toggle-advanced" />
+                <span class="toggle-slider"></span>
+                <span class="toggle-label">Show Advanced Settings</span>
+            </label>
+        </div>
         <form id="notification-form">
-            <textarea id="message-input" placeholder="Enter your notification message..." required></textarea>
-            <button type="submit">Send Notification</button>
+            <div class="form-grid">
+                <input type="text" id="title-input" placeholder="Enter notification title..." required />
+                <input type="url" id="url-input" placeholder="Enter a link (optional)" />
+                <textarea id="message-input" class="full-width" placeholder="Enter your notification message..." required></textarea>
+                <div class="advanced-field">
+                    <input type="url" id="icon-input" placeholder="Icon URL (optional)" />
+                </div>
+                <div class="advanced-field">
+                    <input type="url" id="image-input" placeholder="Image URL (optional)" />
+                </div>
+                <div class="advanced-field">
+                    <input type="url" id="badge-input" placeholder="Badge URL (optional)" />
+                </div>
+                <div class="advanced-field">
+                    <input type="text" id="tag-input" placeholder="Tag (optional)" />
+                </div>
+                <div class="advanced-field">
+                    <input type="text" id="actions-input" placeholder='Actions (JSON array, e.g. [{"action":"open_url","title":"Open","icon":"https://..."}])' />
+                </div>
+                <div class="advanced-field">
+                    <input type="text" id="vibrate-input" placeholder="Vibrate pattern (e.g. 200,100,200)" />
+                </div>
+                <div class="advanced-field">
+                    <input type="number" id="timestamp-input" placeholder="Timestamp (ms, optional)" />
+                </div>
+                <div class="advanced-field">
+                    <textarea id="data-input" placeholder='Data (JSON object, e.g. {"foo":"bar"})'></textarea>
+                </div>
+                <div class="checkbox-row full-width advanced-field">
+                    <label><input type="checkbox" id="require-interaction-input" /> Require Interaction</label>
+                    <label><input type="checkbox" id="renotify-input" /> Renotify</label>
+                    <label><input type="checkbox" id="silent-input" /> Silent</label>
+                </div>
+                <select id="group-select" class="full-width" required>
+                    <option value="All">All</option>
+                    <option value="region">By Region</option>
+                    <option value="lo_subscribed">lo_subscribed</option>
+                </select>
+                <div class="button-center-row">
+                    <button type="submit" class="send-btn-centered">
+                        <span class="send-icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="none" width="1.4em" height="1.4em" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M3 12L21 3L14 21L11 13L3 12Z" fill="currentColor"/>
+                            </svg>
+                        </span>
+                        Send Notification
+                    </button>
+                </div>
+            </div>
         </form>
-        <p id="response-message"></p>
+        <p id="status"></p>
     </div>
-
+    <script src="notification/post.js"></script>
     <script>
-        const form = document.getElementById('notification-form');
-        const messageInput = document.getElementById('message-input');
-        const responseMessage = document.getElementById('response-message');
-
-        form.addEventListener('submit', async (event) => {
-            event.preventDefault(); // Prevent the default form submission
-
-            const message = messageInput.value;
-            if (!message) {
-                responseMessage.textContent = 'Please enter a message.';
-                responseMessage.style.color = 'red';
-                return;
-            }
-
-            responseMessage.textContent = 'Sending...';
-            responseMessage.style.color = '#333';
-
-            try {
-                const response = await fetch('/sendNotification', {
-                    method: 'POST',
-                    body: JSON.stringify({ message: message }),
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                });
-
-                const data = await response.json();
-
-                if (response.ok) {
-                    responseMessage.textContent = 'Success: ' + data.message;
-                    responseMessage.style.color = 'green';
-                } else {
-                    responseMessage.textContent = 'Error: ' + data.error;
-                    responseMessage.style.color = 'red';
-                }
-            } catch (err) {
-                console.error('Failed to send notification:', err);
-                responseMessage.textContent = 'An unexpected error occurred. Check the console.';
-                responseMessage.style.color = 'red';
-            }
+    // Toggle advanced fields and container width
+    const advToggle = document.getElementById('toggle-advanced');
+    const container = document.querySelector('.container');
+    function setAdvancedVisible(visible) {
+        document.querySelectorAll('.advanced-field').forEach(el => {
+            el.style.display = visible ? '' : 'none';
         });
+        if (visible) {
+            container.classList.remove('slim');
+            container.classList.add('wide');
+        } else {
+            container.classList.remove('wide');
+            container.classList.add('slim');
+        }
+    }
+    advToggle.addEventListener('change', function() {
+        setAdvancedVisible(this.checked);
+    });
+    // Default: hide advanced, slim width
+    setAdvancedVisible(false);
     </script>
 </body>
 </html>

@@ -4,7 +4,7 @@ const webpush = require('web-push');
 const bodyParser = require('body-parser');
 require('dotenv').config(); // Load environment variables from .env file
 
-// --- Route Imports ---
+// Import push notification routes
 const pushRoutes = require('./routes/push');
 
 const app = express();
@@ -15,12 +15,6 @@ const port = 3000;
 // It prevents copy-paste errors and keeps secrets out of the code.
 const publicVapidKey = process.env.PUBLIC_VAPID_KEY;
 const privateVapidKey = process.env.PRIVATE_VAPID_KEY;
-
-// --- In-memory storage for the subscription object ---
-// This is now handled within the routes/push.js file
-// let subscription = null; 
-
-// --- Express Server Setup ---
 
 // CRITICAL: Check if VAPID keys are loaded correctly
 if (!publicVapidKey || !privateVapidKey) {
@@ -48,8 +42,13 @@ app.use((req, res, next) => {
 // Serve static files (push.html, client.js, etc.)
 app.use(express.static(path.join(__dirname)));
 
-// --- API Endpoints ---
-// All routes are now handled by the pushRoutes router
+// Use push notification routes (db.json as database)
+
+// Endpoint to expose the public VAPID key to the client
+app.get('/vapidPublicKey', (req, res) => {
+  res.type('text/plain').send(publicVapidKey);
+});
+
 app.use('/', pushRoutes);
 
 app.listen(port, () => {
