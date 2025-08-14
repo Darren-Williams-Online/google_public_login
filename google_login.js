@@ -283,8 +283,10 @@ function handleCredentialResponse(response) {
         // Save to localStorage for session persistence
         localStorage.setItem('googleUserData', JSON.stringify(userData));
         
-        // Show user profile with full data
-        showUserProfile(userData);
+    // Show user profile with full data
+    showUserProfile(userData);
+    // Update avatar/menu in header
+    if (window.onGoogleLoginSuccess) window.onGoogleLoginSuccess();
         
     } catch (error) {
         console.error('Error handling credential response:', error);
